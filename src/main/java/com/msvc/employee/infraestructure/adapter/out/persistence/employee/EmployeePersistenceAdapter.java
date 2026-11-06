@@ -59,7 +59,7 @@ public class EmployeePersistenceAdapter implements EmployeeRepositoryPort {
 
     @Override
     public List<Employee> findAllByWorkSpace(WorkSpace workSpace) {
-        return employeeJpaRepository.findByWorkSpace(workSpace)
+        return employeeJpaRepository.findByWorkSpaces(workSpace)
                 .stream()
                 .map(this::toDomain)
                 .toList();

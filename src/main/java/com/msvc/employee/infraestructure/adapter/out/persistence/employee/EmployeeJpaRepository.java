@@ -9,7 +9,7 @@ public interface EmployeeJpaRepository extends JpaRepository<EmployeeJpaEntity, 
 
     Optional<EmployeeJpaEntity> findByDocumentNumber(String number);
 
-    List<EmployeeJpaEntity> findByWorkSpace(WorkSpace workSpace);
+    List<EmployeeJpaEntity> findByWorkSpaces(WorkSpace workSpace);
 
     boolean existsByEmail(String email);
 
