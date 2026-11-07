@@ -23,7 +23,7 @@ import com.msvc.employee.infraestructure.adapter.in.rest.dto.employee.EmployeeRe
 import com.msvc.employee.infraestructure.adapter.in.rest.mapper.EmployeeMapper;
 
 @RestController
-@RequestMapping("employee/")
+@RequestMapping("/employee")
 public class EmployeeController {
 
     private final EmployeeUseCase employeeUseCase;
@@ -45,12 +45,12 @@ public class EmployeeController {
     }
 
     @GetMapping("/document")
-    public ResponseEntity<?> getByDocumentNumber(@RequestParam String document) {
+    public ResponseEntity<?> getByDocumentNumber(@RequestParam("document") String document) {
         return ResponseEntity.ok(EmployeeMapper.toDto(employeeUseCase.searchByDocumentNumber(document)));
     }
 
     @GetMapping("/workspace")
-    public ResponseEntity<?> getAllByWorkSpace(@RequestParam WorkSpace workSpace) {
+    public ResponseEntity<?> getAllByWorkSpace(@RequestParam("workspace") WorkSpace workSpace) {
         return ResponseEntity.ok(employeeUseCase.searchByWorkSpace(workSpace)
                 .stream().map(EmployeeMapper::toDto));
     }
