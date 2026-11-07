@@ -3,6 +3,7 @@ package com.msvc.employee.aplication.service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.msvc.employee.domain.exception.EntityNotFoundException;
 import com.msvc.employee.domain.models.Employee;
@@ -55,6 +56,21 @@ public class UserService implements UserUseCase {
         user.setActive(true);
 
         return userRepositoryPort.save(user);
+    }
+
+    @Override
+    public boolean existsByEmployeeId(Long employeeId) {
+        return userRepositoryPort.existsByEmployeeId(employeeId);
+    }
+
+    @Override
+    public void updateActiveByEmployeeId(Long employeeId, boolean active) {
+        Optional<User> user = userRepositoryPort.findByEmployeeId(employeeId);
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException(employeeId);
+        }
+        user.get().setActive(active);
+        userRepositoryPort.save(user.get());
     }
 
     @Override
