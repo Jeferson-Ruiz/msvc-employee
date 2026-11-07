@@ -121,8 +121,14 @@ public class EmployeeService implements EmployeeUseCase {
         employee.setSystemAccess(access);
         employeeRepositoryPort.save(employee);
 
-        if (access && !wasAccess) {
-            createUserForEmployee(employee);
+        boolean userExists = userUseCase.existsByEmployeeId(employee.getId());
+
+        if (access != wasAccess) {
+            if (access && !userExists) {
+                createUserForEmployee(employee);
+            } else if (userExists) {
+                userUseCase.updateActiveByEmployeeId(employee.getId(), access);
+            }
         }
     }
 
