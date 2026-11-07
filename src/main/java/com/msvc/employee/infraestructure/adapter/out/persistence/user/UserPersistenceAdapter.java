@@ -65,6 +65,11 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
         return userJpaRepository.existsByEmployee_Id(employeeId);
     }
 
+    @Override
+    public Optional<User> findByEmployeeId(Long employeeId) {
+        return userJpaRepository.findByEmployee_Id(employeeId).map(this::toDomain);
+    }
+
     private User toDomain(UserJpaEntity entity) {
         User user = new User();
         user.setId(entity.getId());

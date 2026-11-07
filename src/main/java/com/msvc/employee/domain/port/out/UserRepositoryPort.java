@@ -18,4 +18,6 @@ public interface UserRepositoryPort {
 
     boolean existsByEmployeeId(Long employeeId);
 
+    Optional<User> findByEmployeeId(Long employeeId);
+
 }

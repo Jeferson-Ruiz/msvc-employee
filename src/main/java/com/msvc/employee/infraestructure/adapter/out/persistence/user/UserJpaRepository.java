@@ -11,4 +11,6 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, Long> {
 
     boolean existsByEmployee_Id(Long employeeId);
 
+    Optional<UserJpaEntity> findByEmployee_Id(Long employeeId);
+
 }
