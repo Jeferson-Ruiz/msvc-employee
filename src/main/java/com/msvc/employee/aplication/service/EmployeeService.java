@@ -1,7 +1,6 @@
 package com.msvc.employee.aplication.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -13,22 +12,21 @@ import com.msvc.employee.domain.exception.EntityNotFoundException;
 import com.msvc.employee.domain.models.AcademicLevel;
 import com.msvc.employee.domain.models.DocumentType;
 import com.msvc.employee.domain.models.Employee;
-import com.msvc.employee.domain.models.User;
 import com.msvc.employee.domain.models.WorkSpace;
 import com.msvc.employee.domain.port.in.EmployeeUseCase;
-import com.msvc.employee.domain.port.in.UserUseCase;
 import com.msvc.employee.domain.port.out.EmployeeRepositoryPort;
+import com.msvc.employee.domain.port.out.UserAccessPort;
 
 @Service
 public class EmployeeService implements EmployeeUseCase {
 
     private final EmployeeRepositoryPort employeeRepositoryPort;
-    private final UserUseCase userUseCase;
+    private final UserAccessPort userAccessPort;
 
     public EmployeeService(EmployeeRepositoryPort employeeRepositoryPort,
-            UserUseCase userUseCase) {
+            UserAccessPort userAccessPort) {
         this.employeeRepositoryPort = employeeRepositoryPort;
-        this.userUseCase = userUseCase;
+        this.userAccessPort = userAccessPort;
     }
 
     @Override
@@ -43,7 +41,7 @@ public class EmployeeService implements EmployeeUseCase {
         Employee employeeSave = employeeRepositoryPort.save(employee);
 
         if (employeeSave.isSystemAccess()) {
-            createUserForEmployee(employeeSave);
+            userAccessPort.createForEmployee(employeeSave.getId());
         }
 
         return employeeSave;
@@ -121,13 +119,13 @@ public class EmployeeService implements EmployeeUseCase {
         employee.setSystemAccess(access);
         employeeRepositoryPort.save(employee);
 
-        boolean userExists = userUseCase.existsByEmployeeId(employee.getId());
+        boolean userExists = userAccessPort.existsByEmployeeId(employee.getId());
 
         if (access != wasAccess) {
             if (access && !userExists) {
-                createUserForEmployee(employee);
+                userAccessPort.createForEmployee(employee.getId());
             } else if (userExists) {
-                userUseCase.updateActiveByEmployeeId(employee.getId(), access);
+                userAccessPort.updateActiveByEmployeeId(employee.getId(), access);
             }
         }
     }
@@ -173,15 +171,6 @@ public class EmployeeService implements EmployeeUseCase {
         if (employeeRepositoryPort.existsByEmail(email.value())) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private void createUserForEmployee(Employee employee) {
-        User user = new User();
-        user.setEmail(employee.getEmail().value());
-        user.setEmployeeId(employee);
-        user.setActive(true);
-        user.setRegistrationDate(LocalDateTime.now());
-        userUseCase.create(user);
     }
 
 }
